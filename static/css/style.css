@@ -1170,7 +1170,7 @@ body {
 /* 7-Day Forecast Cards */
 .forecast-scroll-row {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(105px, 1fr));
   gap: 0.75rem;
   overflow-x: auto;
   padding-bottom: 0.5rem;
