@@ -332,13 +332,6 @@ async function fetchWeather(lat, lon, locName = null) {
     console.error('Failed to load weather:', e);
   }
 }
-    } else {
-      console.error('Weather error:', data.error);
-    }
-  } catch (e) {
-    console.error('Failed to load weather:', e);
-  }
-}
 
 function updateWeatherUI(data) {
   const loc = data.location;
