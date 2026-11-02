@@ -174,12 +174,34 @@ function autoFillWeatherIntoPrediction() {
 function initGeolocationAndWeather() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      async (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         AppState.location.latitude = lat;
         AppState.location.longitude = lon;
-        fetchWeather(lat, lon);
+
+        let detectedName = null;
+        try {
+          const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+          if (r.ok) {
+            const d = await r.json();
+            const city = d.city || d.locality || d.principalSubdivision;
+            const state = d.principalSubdivision || '';
+            const country = d.countryName || '';
+            const parts = [city, state, country].filter(Boolean);
+            if (parts.length > 0) detectedName = parts.join(', ');
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        if (detectedName) {
+          AppState.location.name = detectedName;
+          const locPill = document.getElementById('topbarLocationText');
+          if (locPill) locPill.textContent = detectedName;
+        }
+
+        fetchWeather(lat, lon, detectedName);
       },
       (err) => {
         console.warn('Geolocation initial request skipped or unavailable:', err.message);
@@ -231,14 +253,38 @@ function triggerBrowserGPS() {
   }
 
   navigator.geolocation.getCurrentPosition(
-    (pos) => {
+    async (pos) => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
       AppState.location.latitude = lat;
       AppState.location.longitude = lon;
+
+      let detectedName = null;
+      try {
+        const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+        if (r.ok) {
+          const d = await r.json();
+          const city = d.city || d.locality || d.principalSubdivision;
+          const state = d.principalSubdivision || '';
+          const country = d.countryName || '';
+          const parts = [city, state, country].filter(Boolean);
+          if (parts.length > 0) detectedName = parts.join(', ');
+        }
+      } catch (e) {
+        console.warn('Client reverse geocode error:', e);
+      }
+
+      if (detectedName) {
+        AppState.location.name = detectedName;
+        const locPill = document.getElementById('topbarLocationText');
+        if (locPill) locPill.textContent = detectedName;
+        const wLoc = document.getElementById('weatherViewLocation');
+        if (wLoc) wLoc.textContent = detectedName;
+      }
+
       closeModal('locationModal');
-      fetchWeather(lat, lon);
-      showToast('GPS Location detected successfully!', 'success');
+      fetchWeather(lat, lon, detectedName);
+      showToast(detectedName ? `Detected: ${detectedName}` : 'GPS coordinates detected!', 'success');
       if (btn) btn.innerHTML = 'Detect My Current GPS Location';
     },
     (err) => {

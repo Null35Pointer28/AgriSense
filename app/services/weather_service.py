@@ -110,21 +110,41 @@ def search_locations(query):
 
 def reverse_geocode(lat, lon):
     """
-    Converts coordinates into human-readable location label.
+    Converts coordinates into human-readable location label using multi-provider fallback:
+    1. Nominatim OpenStreetMap
+    2. BigDataCloud API
     """
+    # Provider 1: Nominatim OpenStreetMap
+    try:
+        url = f"https://nominatim.openstreetmap.org/reverse?lat={lat:.4f}&lon={lon:.4f}&format=json&zoom=10"
+        resp = requests.get(url, headers=CUSTOM_HEADERS, timeout=5)
+        if resp.status_code == 200:
+            addr = resp.json().get("address", {})
+            city = addr.get("city") or addr.get("town") or addr.get("village") or addr.get("county") or addr.get("state_district")
+            state = addr.get("state", "")
+            country = addr.get("country", "")
+            parts = [p for p in [city, state, country] if p]
+            if parts:
+                return ", ".join(parts)
+    except Exception:
+        pass
+
+    # Provider 2: BigDataCloud
     try:
         url = "https://api.bigdatacloud.net/data/reverse-geocode-client"
         params = {"latitude": lat, "longitude": lon, "localityLanguage": "en"}
-        resp = requests.get(url, params=params, headers=CUSTOM_HEADERS, timeout=6)
+        resp = requests.get(url, params=params, headers=CUSTOM_HEADERS, timeout=5)
         if resp.status_code == 200:
             data = resp.json()
-            city = data.get("city") or data.get("locality") or data.get("principalSubdivision") or "Detected Field"
+            city = data.get("city") or data.get("locality") or data.get("principalSubdivision")
             state = data.get("principalSubdivision", "")
             country = data.get("countryName", "")
             parts = [p for p in [city, state, country] if p]
-            return ", ".join(parts)
+            if parts:
+                return ", ".join(parts)
     except Exception:
         pass
+
     return f"Farm at ({lat:.2f}°, {lon:.2f}°)"
 
 def _fetch_from_wttr_in(lat, lon, location_name):
@@ -139,6 +159,19 @@ def _fetch_from_wttr_in(lat, lon, location_name):
         data = resp.json()
         curr = data.get("current_condition", [{}])[0]
         weather_days = data.get("weather", [])
+
+        # Extract real location name from wttr.in if location_name is generic
+        resolved_title = location_name
+        if not resolved_title or "Farm at" in resolved_title:
+            nearest = data.get("nearest_area", [{}])[0]
+            area = nearest.get("areaName", [{}])[0].get("value")
+            reg = nearest.get("region", [{}])[0].get("value")
+            cntry = nearest.get("country", [{}])[0].get("value")
+            named_parts = [p for p in [area, reg, cntry] if p]
+            if named_parts:
+                resolved_title = ", ".join(named_parts)
+            else:
+                resolved_title = f"Farm at ({lat:.2f}°, {lon:.2f}°)"
 
         temp = float(curr.get("temp_C", 26.0))
         apparent_temp = float(curr.get("FeelsLikeC", temp))
@@ -180,7 +213,7 @@ def _fetch_from_wttr_in(lat, lon, location_name):
         return {
             "success": True,
             "location": {
-                "name": location_name or f"Farm ({lat:.2f}°, {lon:.2f}°)",
+                "name": resolved_title,
                 "latitude": round(lat, 4),
                 "longitude": round(lon, 4),
                 "timezone": "Auto",
