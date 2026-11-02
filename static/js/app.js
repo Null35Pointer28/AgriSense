@@ -182,11 +182,11 @@ function initGeolocationAndWeather() {
         fetchWeather(lat, lon);
       },
       (err) => {
-        console.warn('Geolocation denied or unavailable:', err.message);
-        // Fallback to default
+        console.warn('Geolocation initial request skipped or unavailable:', err.message);
+        // Fallback to default central agricultural location
         fetchWeather(AppState.location.latitude, AppState.location.longitude);
       },
-      { timeout: 7000 }
+      { timeout: 8000 }
     );
   } else {
     fetchWeather(AppState.location.latitude, AppState.location.longitude);
@@ -201,6 +201,13 @@ function initGeolocationAndWeather() {
   const searchInput = document.getElementById('locSearchInput');
   let debounceTimer;
   if (searchInput) {
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        triggerManualSearch();
+      }
+    });
+
     searchInput.addEventListener('input', (e) => {
       clearTimeout(debounceTimer);
       const query = e.target.value.trim();
@@ -213,6 +220,53 @@ function initGeolocationAndWeather() {
   }
 }
 
+function triggerBrowserGPS() {
+  const btn = document.getElementById('btnDetectGPS');
+  if (btn) btn.innerHTML = '<span class="status-dot"></span> Requesting GPS Coordinates...';
+
+  if (!navigator.geolocation) {
+    showToast('Geolocation is not supported by your browser.', 'warning');
+    if (btn) btn.innerHTML = 'Detect My Current GPS Location';
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      AppState.location.latitude = lat;
+      AppState.location.longitude = lon;
+      closeModal('locationModal');
+      fetchWeather(lat, lon);
+      showToast('GPS Location detected successfully!', 'success');
+      if (btn) btn.innerHTML = 'Detect My Current GPS Location';
+    },
+    (err) => {
+      console.warn('Geolocation permission error:', err.message);
+      let msg = 'Could not retrieve GPS location.';
+      if (err.code === 1) {
+        msg = 'Location permission blocked. If using Brave or Chrome, click the shield/lock icon in your address bar to allow location, or choose a city below.';
+      } else if (err.code === 2) {
+        msg = 'GPS Position unavailable. Please select your city from the list.';
+      } else if (err.code === 3) {
+        msg = 'Location request timed out. Please select your city manually.';
+      }
+      showToast(msg, 'warning');
+      if (btn) btn.innerHTML = 'Detect My Current GPS Location';
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+function triggerManualSearch() {
+  const input = document.getElementById('locSearchInput');
+  if (input && input.value.trim().length >= 2) {
+    searchLocationQuery(input.value.trim());
+  } else {
+    showToast('Please type at least 2 characters to search.', 'info');
+  }
+}
+
 async function searchLocationQuery(query) {
   const container = document.getElementById('locSearchResults');
   container.innerHTML = '<div style="padding: 0.75rem; color: #64748b; font-size: 0.82rem;">Searching locations...</div>';
@@ -221,7 +275,7 @@ async function searchLocationQuery(query) {
     const data = await res.json();
     if (data.success && data.results.length > 0) {
       container.innerHTML = data.results.map(r => `
-        <div class="loc-search-item" onclick="selectSearchedLocation(${r.latitude}, ${r.longitude}, '${escapeHtml(r.display_name)}')">
+        <div class="loc-search-item" style="padding: 0.65rem 0.85rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 0.65rem; cursor: pointer;" onclick="selectSearchedLocation(${r.latitude}, ${r.longitude}, '${escapeHtml(r.display_name)}')">
           <svg style="width: 16px; height: 16px; color: #16a34a; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           <div>
             <strong>${escapeHtml(r.name)}</strong>
@@ -240,6 +294,22 @@ async function searchLocationQuery(query) {
 function selectSearchedLocation(lat, lon, name) {
   closeModal('locationModal');
   AppState.location = { latitude: lat, longitude: lon, name: name };
+
+  // Immediately update UI labels
+  const locPill = document.getElementById('topbarLocationText');
+  if (locPill) locPill.textContent = name;
+  const wLoc = document.getElementById('weatherViewLocation');
+  if (wLoc) wLoc.textContent = name;
+
+  // Show loading indicator in weather pill
+  const weatherPill = document.getElementById('topbarWeatherPill');
+  if (weatherPill) {
+    weatherPill.innerHTML = `
+      <span class="weather-pill-icon">⏳</span>
+      <span class="weather-pill-temp">Updating...</span>
+    `;
+  }
+
   fetchWeather(lat, lon, name);
   showToast(`Location set to: ${name}`, 'success');
 }
@@ -252,7 +322,16 @@ async function fetchWeather(lat, lon, locName = null) {
     if (data.success) {
       AppState.weather = data;
       AppState.location.name = data.location.name;
+      AppState.location.latitude = data.location.latitude;
+      AppState.location.longitude = data.location.longitude;
       updateWeatherUI(data);
+    } else {
+      console.warn('Weather fetch warning:', data.error);
+    }
+  } catch (e) {
+    console.error('Failed to load weather:', e);
+  }
+}
     } else {
       console.error('Weather error:', data.error);
     }

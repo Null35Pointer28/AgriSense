@@ -1181,15 +1181,43 @@
       </div>
       <div class="modal-body">
         <p style="font-size: 0.82rem; color: var(--neutral-600); margin-bottom: 1rem;">
-          Search your city, district, or agricultural zone. AgriSense will retrieve hyper-local weather conditions via Open-Meteo.
+          Select or search your city, district, or farming zone to synchronize real-time meteorological conditions.
         </p>
+
+        <!-- Direct GPS Trigger Button -->
+        <button class="btn btn-outline-primary btn-block" id="btnDetectGPS" onclick="triggerBrowserGPS()" style="margin-bottom: 1rem; padding: 0.75rem;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Detect My Current GPS Location
+        </button>
+
+        <div style="font-size: 0.72rem; color: var(--neutral-500); margin-bottom: 1rem; text-align: center;">
+          — OR ENTER CITY / DISTRICT —
+        </div>
 
         <div class="form-group">
           <label class="form-label">Search City or District</label>
-          <input type="text" class="form-control" id="locSearchInput" placeholder="e.g. Nagpur, Pune, Ludhiana, Coimbatore, Varanasi...">
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" class="form-control" id="locSearchInput" placeholder="e.g. Kolkata, Nagpur, Pune, Ludhiana, Patna...">
+            <button class="btn btn-primary" onclick="triggerManualSearch()" style="padding: 0.65rem 1rem;">Search</button>
+          </div>
         </div>
 
-        <div id="locSearchResults" style="max-height: 220px; overflow-y: auto; margin-top: 0.5rem; border: 1px solid var(--neutral-200); border-radius: var(--radius-md);"></div>
+        <!-- Quick Hub Selectors -->
+        <div style="margin-bottom: 0.75rem;">
+          <span style="font-size: 0.72rem; font-weight: 700; color: var(--neutral-500); text-transform: uppercase;">Quick Agricultural Hubs:</span>
+          <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.35rem;">
+            <button class="badge badge-neutral" style="cursor: pointer; border: none; font-size: 0.75rem; padding: 0.3rem 0.6rem;" onclick="selectSearchedLocation(22.5726, 88.3639, 'Kolkata, West Bengal')">Kolkata</button>
+            <button class="badge badge-neutral" style="cursor: pointer; border: none; font-size: 0.75rem; padding: 0.3rem 0.6rem;" onclick="selectSearchedLocation(21.1458, 79.0882, 'Nagpur, Maharashtra')">Nagpur</button>
+            <button class="badge badge-neutral" style="cursor: pointer; border: none; font-size: 0.75rem; padding: 0.3rem 0.6rem;" onclick="selectSearchedLocation(18.5204, 73.8567, 'Pune, Maharashtra')">Pune</button>
+            <button class="badge badge-neutral" style="cursor: pointer; border: none; font-size: 0.75rem; padding: 0.3rem 0.6rem;" onclick="selectSearchedLocation(30.9010, 75.8573, 'Ludhiana, Punjab')">Ludhiana</button>
+            <button class="badge badge-neutral" style="cursor: pointer; border: none; font-size: 0.75rem; padding: 0.3rem 0.6rem;" onclick="selectSearchedLocation(11.0168, 76.9558, 'Coimbatore, Tamil Nadu')">Coimbatore</button>
+            <button class="badge badge-neutral" style="cursor: pointer; border: none; font-size: 0.75rem; padding: 0.3rem 0.6rem;" onclick="selectSearchedLocation(25.5941, 85.1376, 'Patna, Bihar')">Patna</button>
+            <button class="badge badge-neutral" style="cursor: pointer; border: none; font-size: 0.75rem; padding: 0.3rem 0.6rem;" onclick="selectSearchedLocation(26.9124, 75.7873, 'Jaipur, Rajasthan')">Jaipur</button>
+            <button class="badge badge-neutral" style="cursor: pointer; border: none; font-size: 0.75rem; padding: 0.3rem 0.6rem;" onclick="selectSearchedLocation(25.3176, 82.9739, 'Varanasi, Uttar Pradesh')">Varanasi</button>
+          </div>
+        </div>
+
+        <div id="locSearchResults" style="max-height: 200px; overflow-y: auto; margin-top: 0.5rem; border: 1px solid var(--neutral-200); border-radius: var(--radius-md);"></div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('locationModal')">Close</button>
