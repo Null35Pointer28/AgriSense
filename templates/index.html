@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriSense | Intelligent Crop Management & Agricultural Decision Support System</title>
+
+  <!-- Typography: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Chart.js 4.4 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- ======================================================================
+       SIDEBAR NAVIGATION
+       ====================================================================== -->
+  <aside class="app-sidebar" id="sidebar">
+    <div class="brand-section">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="brand-title">
+        <span>AgriSense</span>
+        <span class="brand-subtitle">Decision Support Layer</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-label">Intelligence Core</div>
+      <a class="nav-item active" data-view="overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Overview Dashboard</span>
+      </a>
+      <a class="nav-item" data-view="recommendation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        <span>Crop Recommendation</span>
+        <span class="nav-badge live">ML</span>
+      </a>
+      <a class="nav-item" data-view="soil">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Soil Health Analysis</span>
+      </a>
+      <a class="nav-item" data-view="weather">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+        <span>Weather Intelligence</span>
+        <span class="nav-badge">Live</span>
+      </a>
+
+      <div class="nav-group-label">Agronomic Advisory</div>
+      <a class="nav-item" data-view="irrigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        <span>Irrigation Advisor</span>
+      </a>
+      <a class="nav-item" data-view="fertilizer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span>Fertilizer Advisor</span>
+      </a>
+      <a class="nav-item" data-view="comparison">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Crop Comparison</span>
+      </a>
+      <a class="nav-item" data-view="calendar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Crop Calendar</span>
+      </a>
+
+      <div class="nav-group-label">Knowledge & Records</div>
+      <a class="nav-item" data-view="library">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Crop Library (22)</span>
+      </a>
+      <a class="nav-item" data-view="history">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Farming Records</span>
+        <span class="nav-badge">SQLite</span>
+      </a>
+      <a class="nav-item" data-view="ml">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>ML Performance</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="system-status-indicator">
+        <div class="status-dot"></div>
+        <span>AgriSense ML Ready</span>
+      </div>
+      <span style="font-size: 0.68rem; font-family: monospace;">v1.0-MVP</span>
+    </div>
+  </aside>
+
+  <!-- ======================================================================
+       MAIN APPLICATION LAYOUT
+       ====================================================================== -->
+  <main class="app-main">
+
+    <!-- Topbar Sticky Header -->
+    <header class="app-topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle-btn" id="menuToggle" aria-label="Toggle menu">
+          <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="page-title-box">
+          <h1 id="topbarPageTitle">Executive Farm Dashboard</h1>
+          <p id="topbarPageSubtitle">Holistic agricultural intelligence and field operations overview</p>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Geolocation Pill -->
+        <div class="location-pill" id="topbarLocationBtn" title="Click to change location">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="topbarLocationText">Central Agriculture Zone</span>
+        </div>
+
+        <!-- Live Weather Pill -->
+        <div class="weather-pill" id="topbarWeatherPill">
+          <span class="weather-pill-icon">☀️</span>
+          <span class="weather-pill-temp">--°C</span>
+          <span style="font-size: 0.75rem; color: #64748b;">Loading...</span>
+        </div>
+
+        <!-- Gemini AI Trigger -->
+        <button class="ai-trigger-btn" id="topbarAITrigger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>Ask AgriSense AI</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Dynamic Content Views -->
+    <div class="app-content">
+
+      <!-- ==================================================================
+           VIEW 1: OVERVIEW DASHBOARD
+           ================================================================== -->
+      <section class="view-section active" id="view-overview">
+        <!-- Top Stats Row -->
+        <div class="grid-4" style="margin-bottom: 1.5rem;">
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Model Accuracy</div>
+              <div class="stat-value">99.55%</div>
+              <div class="stat-desc">Random Forest (22 Classes)</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Current Ambient</div>
+              <div class="stat-value" id="ovWeatherTemp">--°C</div>
+              <div class="stat-desc" id="ovWeatherCond">Loading Open-Meteo...</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Crops Supported</div>
+              <div class="stat-value">22 Species</div>
+              <div class="stat-desc">Cereals, Pulses, Fruits, Fibers</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon rose">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Field Records Logged</div>
+              <div class="stat-value" id="histTotalRecords">0</div>
+              <div class="stat-desc">Persisted in SQLite database</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Middle Row: Weather Card & Latest Recommendation -->
+        <div class="grid-2">
+          <!-- Weather Summary Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </div>
+                <div>
+                  <h3 class="card-title">Hyper-Local Atmospheric Intelligence</h3>
+                  <p class="card-subtitle">Real-time parameters from Open-Meteo API</p>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="switchView('weather')">Full Forecast</button>
+            </div>
+
+            <div class="grid-3" style="margin-bottom: 1.25rem;">
+              <div style="background: var(--neutral-50); padding: 0.85rem; border-radius: var(--radius-md); text-align: center;">
+                <span style="font-size: 0.72rem; color: var(--neutral-500); text-transform: uppercase;">Humidity</span>
+                <div style="font-size: 1.25rem; font-weight: 700; color: var(--neutral-900);" id="ovWeatherHumid">--%</div>
+              </div>
+              <div style="background: var(--neutral-50); padding: 0.85rem; border-radius: var(--radius-md); text-align: center;">
+                <span style="font-size: 0.72rem; color: var(--neutral-500); text-transform: uppercase;">Wind Speed</span>
+                <div style="font-size: 1.25rem; font-weight: 700; color: var(--neutral-900);" id="ovWeatherWind">-- km/h</div>
+              </div>
+              <div style="background: var(--neutral-50); padding: 0.85rem; border-radius: var(--radius-md); text-align: center;">
+                <span style="font-size: 0.72rem; color: var(--neutral-500); text-transform: uppercase;">Precipitation</span>
+                <div style="font-size: 1.25rem; font-weight: 700; color: var(--neutral-900);" id="ovWeatherRain">-- mm</div>
+              </div>
+            </div>
+
+            <p style="font-size: 0.8rem; color: var(--neutral-600); line-height: 1.4;">
+              <strong>Agro-Climatic Guidance:</strong> Atmospheric conditions are continually tracked against biological crop thresholds to provide early warnings for heat stress, fungal incubation, or sudden rain events.
+            </p>
+          </div>
+
+          <!-- Quick ML Recommendation Card -->
+          <div class="card" style="border-left: 4px solid var(--primary-500);">
+            <div class="card-header">
+              <div class="card-header-left">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                </div>
+                <div>
+                  <h3 class="card-title">Recent Crop Recommendation</h3>
+                  <p class="card-subtitle">Validated ML prediction output</p>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="switchView('recommendation')">New Prediction</button>
+            </div>
+
+            <div style="padding: 1.25rem; background: var(--primary-50); border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <span style="font-size: 0.72rem; color: var(--primary-700); text-transform: uppercase; font-weight: 700;">Identified Optimal Crop</span>
+                <div style="font-size: 1.75rem; font-weight: 800; color: var(--primary-900);" id="ovLastRecCrop">RICE (PADDY)</div>
+              </div>
+              <span class="badge badge-success" id="ovLastRecConf">Confidence: 91.9%</span>
+            </div>
+
+            <p style="font-size: 0.8rem; color: var(--neutral-600); line-height: 1.5;">
+              Crop predictions are synthesized from soil macro-nutrients (N-P-K), soil reaction (pH), and local climatological metrics using a multi-algorithm ensemble benchmarked against 2,200 real observations.
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick Access Services Grid -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">AgriSense Decision Support Services</h3>
+            <span style="font-size: 0.78rem; color: var(--neutral-500);">Select a specialized workflow to begin</span>
+          </div>
+
+          <div class="grid-3">
+            <div style="padding: 1rem; border: 1px solid var(--neutral-200); border-radius: var(--radius-md); cursor: pointer;" onclick="switchView('soil')">
+              <div style="color: var(--primary-600); font-weight: 700; margin-bottom: 0.35rem;">🧪 Soil Health Analysis</div>
+              <p style="font-size: 0.8rem; color: var(--neutral-600);">Input NPK & pH to view nutrient deficit badges and organic soil conditioning plans.</p>
+            </div>
+            <div style="padding: 1rem; border: 1px solid var(--neutral-200); border-radius: var(--radius-md); cursor: pointer;" onclick="switchView('irrigation')">
+              <div style="color: var(--blue-600); font-weight: 700; margin-bottom: 0.35rem;">💧 Irrigation Advisor</div>
+              <p style="font-size: 0.8rem; color: var(--neutral-600);">Rule-based water budgeting evaluating soil moisture and upcoming rainfall forecasts.</p>
+            </div>
+            <div style="padding: 1rem; border: 1px solid var(--neutral-200); border-radius: var(--radius-md); cursor: pointer;" onclick="switchView('fertilizer')">
+              <div style="color: var(--amber-500); font-weight: 700; margin-bottom: 0.35rem;">🌾 Fertilizer Guidance</div>
+              <p style="font-size: 0.8rem; color: var(--neutral-600);">Targeted chemical, biofertilizer, and split-dosing strategies for your field.</p>
+            </div>
+            <div style="padding: 1rem; border: 1px solid var(--neutral-200); border-radius: var(--radius-md); cursor: pointer;" onclick="switchView('comparison')">
+              <div style="color: #9333ea; font-weight: 700; margin-bottom: 0.35rem;">📊 Crop Comparison</div>
+              <p style="font-size: 0.8rem; color: var(--neutral-600);">Side-by-side radar and parameter benchmarking across multiple potential crops.</p>
+            </div>
+            <div style="padding: 1rem; border: 1px solid var(--neutral-200); border-radius: var(--radius-md); cursor: pointer;" onclick="switchView('calendar')">
+              <div style="color: #0891b2; font-weight: 700; margin-bottom: 0.35rem;">🗓 Crop Phenology Calendar</div>
+              <p style="font-size: 0.8rem; color: var(--neutral-600);">Timeline of growth stages from land prep to harvest with management checklists.</p>
+            </div>
+            <div style="padding: 1rem; border: 1px solid var(--neutral-200); border-radius: var(--radius-md); cursor: pointer;" onclick="switchView('library')">
+              <div style="color: var(--primary-700); font-weight: 700; margin-bottom: 0.35rem;">📚 Crop Information Library</div>
+              <p style="font-size: 0.8rem; color: var(--neutral-600);">Explore verified biological requirements, cultivation secrets, and botanical profiles.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           VIEW 2: CROP RECOMMENDATION ENGINE
+           ================================================================== -->
+      <section class="view-section" id="view-recommendation">
+        <!-- Hero Result Card (Initially hidden until prediction runs) -->
+        <div class="recommendation-hero" id="predictionResultCard" style="display: none;">
+          <div class="rec-hero-header">
+            <div>
+              <div class="rec-badge-label">Primary ML Recommendation</div>
+              <div class="rec-crop-title" id="recHeroCropName">Rice</div>
+            </div>
+            <div class="rec-confidence-box">
+              <div class="rec-conf-number" id="recHeroConfidence">92.0%</div>
+              <div class="rec-conf-label">Model Confidence</div>
+            </div>
+          </div>
+
+          <p class="rec-explanation-p" id="recHeroExplanation">
+            Agronomic alignment explanation will appear here.
+          </p>
+
+          <div>
+            <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-200); margin-bottom: 0.5rem; font-weight: 700;">
+              Feasible Alternative Crops:
+            </div>
+            <div class="alternatives-container" id="recHeroAlternatives">
+              <!-- Filled dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Input Parameters Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              </div>
+              <div>
+                <h3 class="card-title">Farm Soil & Environmental Parameters</h3>
+                <p class="card-subtitle">Adjust sliders or enter specific numeric laboratory readings</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-secondary btn-sm" onclick="autoFillWeatherIntoPrediction()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                Auto-Fill Live Weather
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <label class="form-label">Field / Plot Identifier (Optional)</label>
+            <input type="text" class="form-control" id="recPlotName" value="North Acre Plot 1" placeholder="e.g. North Plot, Green Field B">
+          </div>
+
+          <!-- Soil Nutrients Grid -->
+          <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-700); margin-bottom: 1rem; border-bottom: 1px solid var(--neutral-200); padding-bottom: 0.4rem;">
+            Soil Macro-Nutrient Reserves
+          </h4>
+
+          <div class="grid-3" style="margin-bottom: 1.5rem;">
+            <!-- Nitrogen (N) -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">Nitrogen (N)</label>
+                <span class="form-range-val" id="valN">90 kg/ha</span>
+              </div>
+              <input type="range" class="range-slider" id="rangeN" min="0" max="140" value="90">
+              <div style="margin-top: 0.5rem;">
+                <input type="number" class="form-control" id="inputN" min="0" max="140" value="90">
+              </div>
+              <span style="font-size: 0.72rem; color: var(--neutral-500);">Dataset Range: 0 - 140 kg/ha</span>
+            </div>
+
+            <!-- Phosphorus (P) -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">Phosphorus (P)</label>
+                <span class="form-range-val" id="valP">42 kg/ha</span>
+              </div>
+              <input type="range" class="range-slider" id="rangeP" min="5" max="145" value="42">
+              <div style="margin-top: 0.5rem;">
+                <input type="number" class="form-control" id="inputP" min="5" max="145" value="42">
+              </div>
+              <span style="font-size: 0.72rem; color: var(--neutral-500);">Dataset Range: 5 - 145 kg/ha</span>
+            </div>
+
+            <!-- Potassium (K) -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">Potassium (K)</label>
+                <span class="form-range-val" id="valK">43 kg/ha</span>
+              </div>
+              <input type="range" class="range-slider" id="rangeK" min="5" max="205" value="43">
+              <div style="margin-top: 0.5rem;">
+                <input type="number" class="form-control" id="inputK" min="5" max="205" value="43">
+              </div>
+              <span style="font-size: 0.72rem; color: var(--neutral-500);">Dataset Range: 5 - 205 kg/ha</span>
+            </div>
+          </div>
+
+          <!-- Environmental Factors Grid -->
+          <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-700); margin-bottom: 1rem; border-bottom: 1px solid var(--neutral-200); padding-bottom: 0.4rem;">
+            Climatic & Soil Reaction Factors
+          </h4>
+
+          <div class="grid-4" style="margin-bottom: 1.5rem;">
+            <!-- Temperature -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">Temperature</label>
+                <span class="form-range-val" id="valTemp">21 °C</span>
+              </div>
+              <input type="range" class="range-slider" id="rangeTemp" min="8" max="44" step="0.5" value="21">
+              <div style="margin-top: 0.5rem;">
+                <input type="number" class="form-control" id="inputTemp" min="8" max="44" step="0.1" value="21.0">
+              </div>
+              <span style="font-size: 0.72rem; color: var(--neutral-500);">Range: 8.8 - 43.7 °C</span>
+            </div>
+
+            <!-- Humidity -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">Humidity</label>
+                <span class="form-range-val" id="valHumid">82 %</span>
+              </div>
+              <input type="range" class="range-slider" id="rangeHumid" min="14" max="100" value="82">
+              <div style="margin-top: 0.5rem;">
+                <input type="number" class="form-control" id="inputHumid" min="14" max="100" value="82">
+              </div>
+              <span style="font-size: 0.72rem; color: var(--neutral-500);">Range: 14.3 - 99.9%</span>
+            </div>
+
+            <!-- Soil pH -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">Soil pH</label>
+                <span class="form-range-val" id="valPH">6.5 pH</span>
+              </div>
+              <input type="range" class="range-slider" id="rangePH" min="3.5" max="9.9" step="0.1" value="6.5">
+              <div style="margin-top: 0.5rem;">
+                <input type="number" class="form-control" id="inputPH" min="3.5" max="9.9" step="0.1" value="6.5">
+              </div>
+              <span style="font-size: 0.72rem; color: var(--neutral-500);">Range: 3.5 - 9.9 pH</span>
+            </div>
+
+            <!-- Seasonal Rainfall -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">Seasonal Rainfall</label>
+                <span class="form-range-val" id="valRain">202 mm</span>
+              </div>
+              <input type="range" class="range-slider" id="rangeRain" min="20" max="300" value="202">
+              <div style="margin-top: 0.5rem;">
+                <input type="number" class="form-control" id="inputRain" min="20" max="300" value="202">
+              </div>
+              <span style="font-size: 0.72rem; color: var(--neutral-500);">Range: 20 - 298 mm</span>
+            </div>
+          </div>
+
+          <div class="alert-box info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <div>
+              <strong>Agronomic Transparency Note:</strong> The rainfall parameter represents accumulated seasonal water availability across the cultivation period. It is distinguished from instantaneous daily precipitation.
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-block" id="btnPredictCrop" onclick="submitCropRecommendation()" style="font-size: 1rem; padding: 0.85rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            Analyze & Recommend Crop
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           VIEW 3: SOIL HEALTH ANALYSIS
+           ================================================================== -->
+      <section class="view-section" id="view-soil">
+        <div class="grid-2">
+          <!-- Soil Inputs Form -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div>
+                  <h3 class="card-title">Enter Soil Test Parameters</h3>
+                  <p class="card-subtitle">Values from soil health card or rapid test kit</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Available Nitrogen (N) - kg/ha</label>
+              <input type="number" class="form-control" id="soilInputN" value="65" placeholder="Optimal: 40 - 80">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Available Phosphorus (P2O5) - kg/ha</label>
+              <input type="number" class="form-control" id="soilInputP" value="22" placeholder="Optimal: 25 - 60">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Available Potassium (K2O) - kg/ha</label>
+              <input type="number" class="form-control" id="soilInputK" value="85" placeholder="Optimal: 30 - 75">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Soil pH Level</label>
+              <input type="number" class="form-control" id="soilInputPH" step="0.1" value="5.8" placeholder="Neutral: 6.5 - 7.5">
+            </div>
+
+            <button class="btn btn-primary btn-block" id="btnAnalyzeSoil" onclick="submitSoilAnalysis()">
+              Evaluate Soil Health
+            </button>
+          </div>
+
+          <!-- Soil Chart Benchmark Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">NPK Macronutrient Balance</h3>
+              <span class="badge badge-neutral">Benchmark Comparison</span>
+            </div>
+            <div style="height: 280px;">
+              <canvas id="soilNutrientsChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Soil Diagnostics Results -->
+        <div id="soilResultsContainer" style="display: none;">
+          <div class="card" style="border-top: 4px solid var(--primary-600);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+              <div>
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--neutral-500); font-weight: 700;">Overall Soil Health Index</span>
+                <div style="font-size: 2rem; font-weight: 800; color: var(--neutral-900);" id="soilOverallScoreVal">78/100</div>
+              </div>
+              <span class="badge badge-success" id="soilOverallBadge" style="font-size: 0.85rem; padding: 0.4rem 0.9rem;">Good Fertility</span>
+            </div>
+
+            <!-- pH Diagnostic Box -->
+            <div style="background: var(--neutral-50); border: 1px solid var(--neutral-200); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <strong style="color: var(--neutral-900);">Soil Reaction & Acidity Assessment:</strong>
+                <span class="badge badge-warning" id="soilPHStatus">Moderately Acidic</span>
+              </div>
+              <p style="font-size: 0.82rem; color: var(--neutral-700); margin-bottom: 0.5rem;" id="soilPHImpact">
+                Phosphorus availability is slightly constrained. Beneficial soil bacteria are somewhat slowed.
+              </p>
+              <div style="font-size: 0.8rem; color: var(--primary-800); background: #f0fdf4; padding: 0.5rem 0.75rem; border-radius: 6px;">
+                <strong>Recommended Treatment:</strong> <span id="soilPHRemedy">Apply 1.5 t/ha agricultural lime.</span>
+              </div>
+            </div>
+
+            <!-- Three Nutrients Cards -->
+            <div class="grid-3" style="margin-bottom: 1.5rem;">
+              <div style="border: 1px solid var(--neutral-200); padding: 1rem; border-radius: var(--radius-md);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <strong>Nitrogen (N)</strong>
+                  <span id="soilNStatus"></span>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--neutral-600);" id="soilNAdvice"></p>
+              </div>
+
+              <div style="border: 1px solid var(--neutral-200); padding: 1rem; border-radius: var(--radius-md);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <strong>Phosphorus (P)</strong>
+                  <span id="soilPStatus"></span>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--neutral-600);" id="soilPAdvice"></p>
+              </div>
+
+              <div style="border: 1px solid var(--neutral-200); padding: 1rem; border-radius: var(--radius-md);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <strong>Potassium (K)</strong>
+                  <span id="soilKStatus"></span>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--neutral-600);" id="soilKAdvice"></p>
+              </div>
+            </div>
+
+            <!-- Tailored Improvement Plan -->
+            <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--neutral-900); margin-bottom: 0.75rem;">
+              Step-by-Step Soil Conditioning & Organic Amendment Plan
+            </h4>
+            <ul id="soilImprovementList" style="padding-left: 1.25rem; font-size: 0.85rem; color: var(--neutral-700);">
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           VIEW 4: WEATHER INTELLIGENCE
+           ================================================================== -->
+      <section class="view-section" id="view-weather">
+        <!-- Weather Hero Card -->
+        <div class="card" style="background: linear-gradient(135deg, #103b25, #082818); color: #fff;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+            <div>
+              <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--primary-300); font-weight: 700;">Monitored Farm Coordinates</span>
+              <div style="font-size: 1.5rem; font-weight: 800; color: #fff;" id="weatherViewLocation">Detecting...</div>
+              <span style="font-size: 0.75rem; opacity: 0.7;">Last Sync: <span id="weatherViewUpdated">--:--</span> | Open-Meteo API</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="openModal('locationModal')">
+              Change Location
+            </button>
+          </div>
+
+          <div class="grid-4" style="margin-bottom: 1rem;">
+            <div style="background: rgba(255,255,255,0.08); padding: 1rem; border-radius: var(--radius-md);">
+              <span style="font-size: 0.72rem; opacity: 0.8; text-transform: uppercase;">Temperature</span>
+              <div style="font-size: 2rem; font-weight: 800; color: #fff;" id="weatherViewTemp">--°C</div>
+              <span style="font-size: 0.75rem; color: var(--primary-200);" id="weatherViewCond">--</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); padding: 1rem; border-radius: var(--radius-md);">
+              <span style="font-size: 0.72rem; opacity: 0.8; text-transform: uppercase;">Feels Like</span>
+              <div style="font-size: 2rem; font-weight: 800; color: #fff;" id="weatherViewApparent">--°C</div>
+              <span style="font-size: 0.75rem; opacity: 0.7;">Thermal Index</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); padding: 1rem; border-radius: var(--radius-md);">
+              <span style="font-size: 0.72rem; opacity: 0.8; text-transform: uppercase;">Relative Humidity</span>
+              <div style="font-size: 2rem; font-weight: 800; color: #fff;" id="weatherViewHumidity">--%</div>
+              <span style="font-size: 0.75rem; opacity: 0.7;">Vapor Concentration</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); padding: 1rem; border-radius: var(--radius-md);">
+              <span style="font-size: 0.72rem; opacity: 0.8; text-transform: uppercase;">Wind & Precip</span>
+              <div style="font-size: 1.5rem; font-weight: 800; color: #fff;" id="weatherViewWind">-- km/h</div>
+              <span style="font-size: 0.75rem; opacity: 0.7;" id="weatherViewPrecip">-- mm rain</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agricultural Alerts Box -->
+        <div id="weatherAlertsContainer"></div>
+
+        <!-- 7-Day Forecast Grid -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">7-Day Agricultural Forecast</h3>
+            <span style="font-size: 0.75rem; color: var(--neutral-500);">Open-Meteo Numerical Weather Prediction</span>
+          </div>
+          <div class="forecast-scroll-row" id="weatherForecastCardsRow">
+            <!-- 7 forecast day cards filled dynamically -->
+          </div>
+        </div>
+
+        <!-- 24-Hour Trend Chart -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Next 24-Hours Temperature & Rain Probability Trend</h3>
+          </div>
+          <div style="height: 280px;">
+            <canvas id="weatherHourlyChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           VIEW 5: IRRIGATION ADVISOR
+           ================================================================== -->
+      <section class="view-section" id="view-irrigation">
+        <div class="grid-1-2">
+          <!-- Irrigation Input Form -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                </div>
+                <div>
+                  <h3 class="card-title">Irrigation Parameters</h3>
+                  <p class="card-subtitle">Rule-based crop water budgeting</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Target Crop</label>
+              <select class="form-control form-select" id="irrigCropSelect"></select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Soil Texture Category</label>
+              <select class="form-control form-select" id="irrigSoilType">
+                <option value="loam" selected>Medium Loam (Balanced Drainage)</option>
+                <option value="clay">Heavy Clay (High Retention, Slow Drainage)</option>
+                <option value="sandy">Sandy Soil (Rapid Drainage, Low Retention)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Visual Surface Moisture Observation</label>
+              <select class="form-control form-select" id="irrigSurfaceState">
+                <option value="dry_loose" selected>Dry Surface Layer (Top 2-3 cm Dry)</option>
+                <option value="dry_cracked">Hard Dry / Surface Cracking Visible</option>
+                <option value="slightly_moist">Slightly Moist Under Hand Test</option>
+                <option value="wet_saturated">Saturated / Standing Water Film</option>
+              </select>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Temp (°C)</label>
+                <input type="number" class="form-control" id="irrigTemp" value="26">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Humidity (%)</label>
+                <input type="number" class="form-control" id="irrigHumid" value="65">
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Recent Rain (mm)</label>
+                <input type="number" class="form-control" id="irrigRecentRain" value="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label">48h Rain Forecast (mm)</label>
+                <input type="number" class="form-control" id="irrigForecastRain" value="0">
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+              <button class="btn btn-secondary btn-sm" onclick="autoFillWeatherIntoIrrigation()" style="flex: 1;">
+                Sync Live Weather
+              </button>
+            </div>
+
+            <button class="btn btn-primary btn-block" id="btnCalculateIrrig" onclick="submitIrrigationCheck()">
+              Compute Irrigation Advice
+            </button>
+          </div>
+
+          <!-- Irrigation Advisory Results Card -->
+          <div>
+            <div class="card" id="irrigResultCard" style="border-left: 4px solid var(--blue-600);">
+              <div class="card-header">
+                <div>
+                  <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--neutral-500); font-weight: 700;">Agronomic Advisory Output</span>
+                  <h3 class="card-title" id="irrigRecommendationText" style="color: var(--neutral-900); font-size: 1.35rem;">
+                    Scheduled Light Irrigation Recommended
+                  </h3>
+                </div>
+                <span class="badge badge-warning" id="irrigPriorityBadge">Priority: Moderate</span>
+              </div>
+
+              <div style="background: var(--neutral-50); padding: 1rem 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+                <strong style="color: var(--neutral-900);">Recommended Action:</strong>
+                <p style="font-size: 0.88rem; color: var(--neutral-700); margin-top: 0.25rem;" id="irrigActionText">
+                  Provide measured root-depth moisture within 24 hours.
+                </p>
+              </div>
+
+              <div style="margin-bottom: 1.25rem;">
+                <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--neutral-900); margin-bottom: 0.5rem;">
+                  Advisory Logic & Reasoning Factors:
+                </h4>
+                <ul id="irrigReasonsList" style="padding-left: 1.25rem; font-size: 0.82rem; color: var(--neutral-700);">
+                  <li>Warm atmospheric temperature accelerates surface evapotranspiration.</li>
+                  <li>No significant rainfall expected in the immediate 48-hour window.</li>
+                </ul>
+              </div>
+
+              <div class="alert-box warning" id="irrigWarningsBox" style="display: none;"></div>
+
+              <div style="background: #f0fdf4; border: 1px solid var(--primary-200); padding: 0.85rem; border-radius: var(--radius-md); font-size: 0.8rem; color: var(--primary-900);">
+                <strong>💧 Water Conservation Tip:</strong> <span id="irrigTipText">Adopt drip irrigation to save up to 45% water compared to furrow flooding.</span>
+              </div>
+
+              <div style="margin-top: 1rem; font-size: 0.72rem; color: var(--neutral-500);">
+                Atmospheric Evaporative Demand: <strong id="irrigEvapIndex">14.2 (VPD proxy)</strong> | Disclaimer: Sensorless rule-based agronomic model.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           VIEW 6: FERTILIZER ADVISOR
+           ================================================================== -->
+      <section class="view-section" id="view-fertilizer">
+        <div class="grid-1-2">
+          <!-- Inputs Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                </div>
+                <div>
+                  <h3 class="card-title">Nutrient Diagnostic Parameters</h3>
+                  <p class="card-subtitle">Fertilizer advice based on NPK and soil pH</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Crop Target</label>
+              <select class="form-control form-select" id="fertCropSelect"></select>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Nitrogen (kg/ha)</label>
+                <input type="number" class="form-control" id="fertInputN" value="35">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phosphorus (kg/ha)</label>
+                <input type="number" class="form-control" id="fertInputP" value="20">
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Potassium (kg/ha)</label>
+                <input type="number" class="form-control" id="fertInputK" value="25">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Soil pH</label>
+                <input type="number" class="form-control" id="fertInputPH" step="0.1" value="6.2">
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-block" id="btnCalculateFert" onclick="submitFertilizerAdvisor()">
+              Generate Fertilizer Recommendations
+            </button>
+          </div>
+
+          <!-- Recommendations Output -->
+          <div>
+            <div class="card" id="fertResultsContainer">
+              <div class="card-header">
+                <h3 class="card-title">Nutrient Status & Supplementation Strategy</h3>
+              </div>
+
+              <!-- Diagnostics List -->
+              <div id="fertDiagnosticsList" style="margin-bottom: 1.5rem;"></div>
+
+              <!-- Chemical / Mineral Fertilizers -->
+              <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--primary-800); margin-bottom: 0.75rem; text-transform: uppercase;">
+                Mineral & Chemical Fertilizer Categories
+              </h4>
+              <div id="fertChemOptions" style="margin-bottom: 1.5rem;"></div>
+
+              <!-- Biofertilizers -->
+              <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--primary-800); margin-bottom: 0.75rem; text-transform: uppercase;">
+                Biofertilizers & Microbial Inoculants
+              </h4>
+              <div id="fertBioOptions" style="margin-bottom: 1.5rem;"></div>
+
+              <!-- Cautions -->
+              <div class="alert-box warning" id="fertCautionsBox" style="display: none;"></div>
+
+              <div class="alert-box info" style="margin-top: 1rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <div style="font-size: 0.75rem;">
+                  <strong>Advisory Disclaimer:</strong> Fertilizer advice provides category-level strategies. Confirm exact kilogram dosages with local state agricultural university fertilizer dosage charts or your district Krishi Vigyan Kendra (KVK).
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           VIEW 7: CROP INFORMATION LIBRARY
+           ================================================================== -->
+      <section class="view-section" id="view-library">
+        <!-- Search and Filter Bar -->
+        <div class="card" style="padding: 1.25rem;">
+          <div class="grid-3">
+            <div>
+              <label class="form-label">Search Crops</label>
+              <input type="text" class="form-control" id="cropSearchInput" placeholder="Search by name, category, or genus..." oninput="filterCropsCatalog()">
+            </div>
+            <div>
+              <label class="form-label">Filter by Category</label>
+              <select class="form-control form-select" id="cropCategoryFilter" onchange="filterCropsCatalog()">
+                <option value="all">All Categories (Cereal, Pulse, Fruit, Fiber...)</option>
+                <option value="Cereal">Cereals</option>
+                <option value="Pulse">Pulses & Legumes</option>
+                <option value="Fruit">Fruits & Horticultural</option>
+                <option value="Fiber">Fiber Crops</option>
+                <option value="Cash">Cash & Commercial</option>
+                <option value="Beverage">Beverages</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Filter by Season</label>
+              <select class="form-control form-select" id="cropSeasonFilter" onchange="filterCropsCatalog()">
+                <option value="all">All Seasons (Kharif, Rabi, Zaid, Perennial)</option>
+                <option value="Kharif">Kharif (Monsoon)</option>
+                <option value="Rabi">Rabi (Winter)</option>
+                <option value="Zaid">Zaid (Summer)</option>
+                <option value="Perennial">Perennial / Year-Round</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crops Grid -->
+        <div class="grid-3" id="cropsCatalogGrid">
+          <!-- 22 crop cards loaded via JS -->
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           VIEW 8: CROP SUITABILITY COMPARISON
+           ================================================================== -->
+      <section class="view-section" id="view-comparison">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Select Crops to Benchmark Side-by-Side</h3>
+              <p class="card-subtitle">Calculates transparent Gaussian statistical compatibility scores against farm parameters</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="runCropComparison()">Update Comparison</button>
+          </div>
+
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem;" id="comparisonCheckboxes">
+            <!-- Dynamically populated checkboxes -->
+          </div>
+
+          <div class="grid-2">
+            <!-- Table -->
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Crop</th>
+                    <th>Suitability</th>
+                    <th>Climate</th>
+                    <th>Water</th>
+                    <th>pH</th>
+                    <th>NPK</th>
+                    <th>Duration</th>
+                    <th>Water Req</th>
+                  </tr>
+                </thead>
+                <tbody id="comparisonTableBody"></tbody>
+              </table>
+            </div>
+
+            <!-- Radar Chart -->
+            <div style="height: 320px;">
+              <canvas id="comparisonRadarChart"></canvas>
+            </div>
+          </div>
+
+          <div class="alert-box info" style="margin-top: 1.25rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <div style="font-size: 0.78rem;">
+              <strong>Documented Agronomic Methodology:</strong> Suitability scores represent mathematical proximity to the empirical dataset mean for each crop: 30% Thermal/Humidity + 25% Rainfall + 25% Soil pH + 20% NPK balance.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           VIEW 9: CROP CALENDAR & PHENOLOGY
+           ================================================================== -->
+      <section class="view-section" id="view-calendar">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Crop Cultivation Timeline & Field Operations</h3>
+              <p class="card-subtitle">Phenological growth stages and critical farming milestones</p>
+            </div>
+            <div style="width: 240px;">
+              <select class="form-control form-select" id="calendarCropSelect" onchange="loadCalendarView()"></select>
+            </div>
+          </div>
+
+          <!-- Seasonal Window Pill Row -->
+          <div class="grid-3" style="margin-bottom: 1.5rem;">
+            <div style="background: var(--neutral-50); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+              <span style="font-size: 0.72rem; color: var(--neutral-500); text-transform: uppercase;">Sowing Period</span>
+              <div style="font-size: 1.15rem; font-weight: 700; color: var(--primary-800);" id="calSowingMonths">--</div>
+            </div>
+            <div style="background: var(--neutral-50); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+              <span style="font-size: 0.72rem; color: var(--neutral-500); text-transform: uppercase;">Active Growth Window</span>
+              <div style="font-size: 1.15rem; font-weight: 700; color: var(--primary-800);" id="calActiveMonths">--</div>
+            </div>
+            <div style="background: var(--neutral-50); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+              <span style="font-size: 0.72rem; color: var(--neutral-500); text-transform: uppercase;">Harvesting Window</span>
+              <div style="font-size: 1.15rem; font-weight: 700; color: var(--primary-800);" id="calHarvestMonths">--</div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <!-- Timeline of Stages -->
+            <div>
+              <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--neutral-900); margin-bottom: 1rem; display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <span>Phenological Growth Stages: <span id="calCropName" style="color: var(--primary-700);"></span></span>
+                <span class="badge badge-success" id="calSeason"></span>
+                <span class="badge badge-neutral" id="calDuration"></span>
+              </h4>
+              <div id="calStagesTimeline"></div>
+            </div>
+
+            <!-- Management Checklist -->
+            <div>
+              <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--neutral-900); margin-bottom: 1rem;">
+                Farming Operations Checklist
+              </h4>
+              <div id="calOperationsChecklist"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           VIEW 10: FARMING HISTORY
+           ================================================================== -->
+      <section class="view-section" id="view-history">
+        <!-- Top Historical KPI Summary -->
+        <div class="grid-4" style="margin-bottom: 1.5rem;">
+          <div class="stat-card">
+            <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div class="stat-content">
+              <div class="stat-label">Most Recommended</div>
+              <div class="stat-value" id="histTopCrop" style="font-size: 1.25rem;">--</div>
+              <div class="stat-desc">Historical dominant crop</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div class="stat-content">
+              <div class="stat-label">Average Nitrogen</div>
+              <div class="stat-value" id="histAvgN">--</div>
+              <div class="stat-desc">Farm soil average</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div class="stat-content">
+              <div class="stat-label">Average Phosphorus</div>
+              <div class="stat-value" id="histAvgP">--</div>
+              <div class="stat-desc">Farm soil average</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon rose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div class="stat-content">
+              <div class="stat-label">Average Potassium</div>
+              <div class="stat-value" id="histAvgK">--</div>
+              <div class="stat-desc">Farm soil average</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Records Table -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Farming Records & Soil Test Logs</h3>
+              <p class="card-subtitle">Stored persistently in SQLite (data/agrisense.db)</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('manualLogModal')">
+              + Log New Field Record
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Plot Name</th>
+                  <th>Recommended</th>
+                  <th>Confidence</th>
+                  <th>NPK (kg/ha)</th>
+                  <th>Climate</th>
+                  <th>Notes</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           VIEW 11: ML PERFORMANCE CENTER
+           ================================================================== -->
+      <section class="view-section" id="view-ml">
+        <!-- Dataset Overview Card -->
+        <div class="grid-4" style="margin-bottom: 1.5rem;">
+          <div class="stat-card">
+            <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/></svg></div>
+            <div class="stat-content">
+              <div class="stat-label">Total Dataset Records</div>
+              <div class="stat-value" id="mlTotalSamples">2,200</div>
+              <div class="stat-desc">Atharva Ingle Public Dataset</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/></svg></div>
+            <div class="stat-content">
+              <div class="stat-label">Crop Classes</div>
+              <div class="stat-value" id="mlClassesCount">22</div>
+              <div class="stat-desc">100 balanced samples per class</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg></div>
+            <div class="stat-content">
+              <div class="stat-label">Feature Count</div>
+              <div class="stat-value" id="mlFeaturesCount">7</div>
+              <div class="stat-desc">N, P, K, Temp, Humid, pH, Rain</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon rose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="stat-content">
+              <div class="stat-label">Selected Model</div>
+              <div class="stat-value" id="mlBestModelName" style="font-size: 1.15rem;">Random Forest</div>
+              <div class="stat-desc">Highest F1-Weighted score</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Model Comparison Card -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Multi-Algorithm Rigorous Evaluation Comparison</h3>
+              <p class="card-subtitle">Evaluated on stratified 20% test split (440 samples) with zero data leakage</p>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Accuracy</th>
+                    <th>Precision (W)</th>
+                    <th>Recall (W)</th>
+                    <th>F1-Score (W)</th>
+                  </tr>
+                </thead>
+                <tbody id="mlComparisonTableBody"></tbody>
+              </table>
+            </div>
+
+            <div style="height: 280px;">
+              <canvas id="mlComparisonChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confusion Matrix Card -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Full 22x22 Multiclass Confusion Matrix</h3>
+              <p class="card-subtitle">Predictions for each crop class on held-out test split (Selected Model: Random Forest)</p>
+            </div>
+          </div>
+          <div class="table-responsive" id="mlConfusionMatrixContainer"></div>
+        </div>
+      </section>
+
+    </div><!-- /app-content -->
+  </main>
+
+  <!-- ======================================================================
+       MODAL 1: CHANGE LOCATION
+       ====================================================================== -->
+  <div class="modal-overlay" id="locationModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Select Farming Location</h3>
+        <button class="modal-close-btn" onclick="closeModal('locationModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.82rem; color: var(--neutral-600); margin-bottom: 1rem;">
+          Search your city, district, or agricultural zone. AgriSense will retrieve hyper-local weather conditions via Open-Meteo.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">Search City or District</label>
+          <input type="text" class="form-control" id="locSearchInput" placeholder="e.g. Nagpur, Pune, Ludhiana, Coimbatore, Varanasi...">
+        </div>
+
+        <div id="locSearchResults" style="max-height: 220px; overflow-y: auto; margin-top: 0.5rem; border: 1px solid var(--neutral-200); border-radius: var(--radius-md);"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('locationModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 2: CROP DETAIL AGRONOMIC PROFILE
+       ====================================================================== -->
+  <div class="modal-overlay" id="cropDetailModal">
+    <div class="modal-box" style="max-width: 750px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="modalCropTitle">Crop Details</h3>
+          <p style="font-size: 0.75rem; color: var(--neutral-500);" id="modalCropScientific"></p>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('cropDetailModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--neutral-700); line-height: 1.5; margin-bottom: 1.25rem;" id="modalCropDesc"></p>
+
+        <div class="grid-3" style="margin-bottom: 1.25rem;">
+          <div style="background: var(--neutral-50); padding: 0.75rem; border-radius: 6px;">
+            <span style="font-size: 0.7rem; color: var(--neutral-500); text-transform: uppercase;">Season</span>
+            <div style="font-size: 0.95rem; font-weight: 700; color: var(--neutral-900);" id="modalCropSeason"></div>
+          </div>
+          <div style="background: var(--neutral-50); padding: 0.75rem; border-radius: 6px;">
+            <span style="font-size: 0.7rem; color: var(--neutral-500); text-transform: uppercase;">Duration</span>
+            <div style="font-size: 0.95rem; font-weight: 700; color: var(--neutral-900);" id="modalCropDuration"></div>
+          </div>
+          <div style="background: var(--neutral-50); padding: 0.75rem; border-radius: 6px;">
+            <span style="font-size: 0.7rem; color: var(--neutral-500); text-transform: uppercase;">Water Demand</span>
+            <div style="font-size: 0.95rem; font-weight: 700; color: var(--neutral-900);" id="modalCropWater"></div>
+          </div>
+        </div>
+
+        <div class="grid-3" style="margin-bottom: 1.25rem;">
+          <div style="background: var(--neutral-50); padding: 0.75rem; border-radius: 6px;">
+            <span style="font-size: 0.7rem; color: var(--neutral-500); text-transform: uppercase;">Optimal Soil</span>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--neutral-900);" id="modalCropSoil"></div>
+          </div>
+          <div style="background: var(--neutral-50); padding: 0.75rem; border-radius: 6px;">
+            <span style="font-size: 0.7rem; color: var(--neutral-500); text-transform: uppercase;">Optimal Temperature</span>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--neutral-900);" id="modalCropTemp"></div>
+          </div>
+          <div style="background: var(--neutral-50); padding: 0.75rem; border-radius: 6px;">
+            <span style="font-size: 0.7rem; color: var(--neutral-500); text-transform: uppercase;">Optimal pH</span>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--neutral-900);" id="modalCropPH"></div>
+          </div>
+        </div>
+
+        <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--primary-800); margin-bottom: 0.5rem; text-transform: uppercase;">
+          Agronomic Cultivation Secrets:
+        </h4>
+        <ul id="modalCropTips" style="padding-left: 1.25rem; font-size: 0.82rem; color: var(--neutral-700); margin-bottom: 1.25rem;"></ul>
+
+        <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--primary-800); margin-bottom: 0.5rem; text-transform: uppercase;">
+          Growth Stages Phenology:
+        </h4>
+        <div id="modalCropStages"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('cropDetailModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 3: MANUAL FIELD LOG RECORD
+       ====================================================================== -->
+  <div class="modal-overlay" id="manualLogModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Log Field Observation to SQLite</h3>
+        <button class="modal-close-btn" onclick="closeModal('manualLogModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Plot / Field Name</label>
+            <input type="text" class="form-control" id="logPlotName" value="South Farm Block A">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Planted / Selected Crop</label>
+            <input type="text" class="form-control" id="logCrop" value="Wheat">
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="form-label">Nitrogen (N)</label>
+            <input type="number" class="form-control" id="logN" value="60">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phosphorus (P)</label>
+            <input type="number" class="form-control" id="logP" value="35">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Potassium (K)</label>
+            <input type="number" class="form-control" id="logK" value="40">
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="form-label">pH</label>
+            <input type="number" class="form-control" id="logPH" step="0.1" value="6.5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Temp (°C)</label>
+            <input type="number" class="form-control" id="logTemp" value="24">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Humidity (%)</label>
+            <input type="number" class="form-control" id="logHumid" value="65">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Rainfall / Water (mm)</label>
+          <input type="number" class="form-control" id="logRain" value="75">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Observations & Agronomic Notes</label>
+          <textarea class="form-control" id="logNotes" rows="3" placeholder="Field observations, fertilizer applications, pest scouting notes..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('manualLogModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitManualHistoryRecord()">Save to SQLite</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       AI AGRICULTURAL ASSISTANT DRAWER (GEMINI API)
+       ====================================================================== -->
+  <div class="chat-drawer" id="chatDrawer">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-header-icon">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div>
+          <div style="font-weight: 700; font-size: 0.95rem;">AgriSense AI Assistant</div>
+          <div style="font-size: 0.68rem; color: var(--primary-200);">Powered by Google Gemini (google-genai)</div>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="chatCloseBtn" style="background: rgba(255,255,255,0.1); color: #fff; border: none;">&times;</button>
+    </div>
+
+    <!-- Live Context Badge -->
+    <div class="chat-context-badge">
+      <strong>Active Farm Context:</strong>
+      <div id="chatContextText" style="font-size: 0.72rem; color: var(--neutral-700); margin-top: 0.15rem;">
+        Synchronizing farm coordinates and weather parameters...
+      </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-bubble assistant">
+        Hello! I am your <strong>AgriSense Intelligent Agricultural Advisor</strong>.
+        I can answer questions regarding crop selection, soil health, irrigation schedules, fertilizer management, and real-time weather impacts.
+        <br><br>How can I assist your farm today?
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input-area">
+      <div class="chat-input-row">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Ask about crops, fertilizers, irrigation, disease...">
+        <button class="btn btn-primary btn-sm" id="chatSendBtn" style="border-radius: var(--radius-xl); padding: 0.6rem 1rem;">
+          Send
+        </button>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+        <button class="btn btn-secondary btn-sm" onclick="clearChatHistory()" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">
+          Clear Chat
+        </button>
+        <span style="font-size: 0.68rem; color: var(--neutral-400);">Context-aware agricultural advisor</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app-container -->
+
+<!-- Core Script -->
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
